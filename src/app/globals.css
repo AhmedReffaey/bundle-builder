@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-gilroy);
+
+  /* ── Brand colors ── */
+  --color-brand-purple:       #7C3AED;
+  --color-brand-indigo:       #312E81;
+  --color-brand-green:        #16A34A;
+  --color-brand-red:          #D8392B;
+  --color-brand-deep-purple:  #4E2FD2;
+  --color-brand-dark:         #111827;
+  --color-brand-amber:        #D97706;
+
+  /* ── UI tokens ── */
+  --color-review-bg:          #EDF4FF;
+  --color-review-border:      #C8DCFF;
+  --color-review-footer:      #eef3ff;
+  --color-amber-icon-bg:      #FEF3C7;
+  --color-compare-gray:       #575757;
+  --color-compare-muted:      #6F7882;
+  --color-badge-dark:         #111827;
+
+  /* ── Shadows ── */
+  --shadow-card:              0 2px 12px rgba(0,0,0,0.06);
+  --shadow-card-selected:     0 2px 12px rgba(124,58,237,0.12);
+  --shadow-card-base:         0 1px 3px rgba(0,0,0,0.04);
+  --shadow-step:              0 1px 6px rgba(0,0,0,0.07);
+  --shadow-modal:             0 -4px 60px rgba(0,0,0,0.18);
+
+  /* ── Animations ── */
+  --animate-modal-slide-up: modal-slide-up 0.25s cubic-bezier(0.16,1,0.3,1);
+  --animate-scale-in:       scale-in 0.45s cubic-bezier(0.175,0.885,0.32,1.275);
+  --animate-ping-once:      ping-once 0.65s ease-out 0.15s both;
+  --animate-toast-in:       toast-in 0.22s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #FFFFFF;
+  --foreground: #111827;
 }
 
 body {
+  font-family: var(--font-gilroy), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.6px;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* SVG check-draw animation — can't be expressed as Tailwind utility */
+.animate-check-draw {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 0;
+  animation: check-draw 0.4s ease-out 0.25s both;
+}
+
+/* Hide scrollbar on tablet horizontal-scroll product rows */
+.snap-x::-webkit-scrollbar { display: none; }
+.snap-x { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes modal-slide-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0);   opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes check-draw {
+  from { stroke-dashoffset: 48; }
+  to   { stroke-dashoffset: 0;  }
+}
+
+@keyframes ping-once {
+  0%   { transform: scale(0.85); opacity: 0.25; }
+  100% { transform: scale(1.6);  opacity: 0;    }
+}
+
+@keyframes toast-in {
+  from { transform: translateX(-50%) translateY(12px) scale(0.95); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0)    scale(1);    opacity: 1; }
 }
