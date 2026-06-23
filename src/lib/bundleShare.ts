@@ -43,6 +43,7 @@ export function decodeBundle(encoded: string): BundleSnapshot | null {
 }
 
 export function applySnapshot(steps: Step[], snapshot: BundleSnapshot): Step[] {
+  if (!Array.isArray(snapshot?.selections)) return steps;
   return steps.map((step) => ({
     ...step,
     products: step.products.map((product) => {

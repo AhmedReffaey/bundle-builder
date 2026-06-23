@@ -29,6 +29,7 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
     abortControllerRef.current?.abort();
     setPhase('summary');
     setOrderNumber('');
+    setErrorMsg('');
     returnFocusRef.current?.focus();
     onClose();
   }, [onClose]);
@@ -218,7 +219,7 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
             {/* Footer */}
             <div className="px-6 py-5 border-t border-gray-100 flex-shrink-0">
               {errorMsg && (
-                <p className="text-red-500 text-xs text-center mb-3">{errorMsg}</p>
+                <p role="alert" className="text-red-500 text-xs text-center mb-3">{errorMsg}</p>
               )}
               <button
                 onClick={handlePlaceOrder}

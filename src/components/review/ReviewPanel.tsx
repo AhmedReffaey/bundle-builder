@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { useBundleStore } from '@/store/bundleStore';
 import { computeReviewItems, computeTotal } from '@/lib/bundleCalculations';
 import { analytics } from '@/lib/analytics';
@@ -196,11 +196,13 @@ export default function ReviewPanel() {
 }
 
 function GuaranteeSeal() {
+  const uid = useId();
+  const textPathId = `${uid}-outerTextPath`;
   return (
     <div className="flex-shrink-0 w-[76px] h-[76px]">
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <path id="outerTextPath" d="M 32 32 m -23 0 a 23 23 0 1 1 46 0 a 23 23 0 1 1 -46 0" />
+          <path id={textPathId} d="M 32 32 m -23 0 a 23 23 0 1 1 46 0 a 23 23 0 1 1 -46 0" />
         </defs>
         <path d="M 29.55,7.8 Q 32,5 34.45,7.8 Q 36.9,10.6 40.05,9 Q 43.2,7.4 44.45,11.1 Q 45.7,14.8 49.4,15 Q 53.1,15.2 52.5,18.9 Q 51.9,22.6 55.1,24.25 Q 58.3,25.9 56.15,28.95 Q 54,32 56.15,35 Q 58.3,38 55.1,39.7 Q 51.9,41.4 52.5,45.1 Q 53.1,48.8 49.4,49 Q 45.7,49.2 44.45,52.9 Q 43.2,56.6 40.05,55 Q 36.9,53.4 34.45,56.2 Q 32,59 29.55,56.2 Q 27.1,53.4 23.95,55 Q 20.8,56.6 19.55,52.9 Q 18.3,49.2 14.6,49 Q 10.9,48.8 11.5,45.1 Q 12.1,41.4 8.9,39.7 Q 5.7,38 7.85,35 Q 10,32 7.85,28.95 Q 5.7,25.9 8.9,24.25 Q 12.1,22.6 11.5,18.9 Q 10.9,15.2 14.6,15 Q 18.3,14.8 19.55,11.1 Q 20.8,7.4 23.95,9 Q 27.1,10.6 29.55,7.8 Z" fill="#6D28D9" />
         <circle cx="32" cy="32" r="19.5" fill="#4C1D95" />
@@ -210,7 +212,7 @@ function GuaranteeSeal() {
         <text x="32" y="42" textAnchor="middle" fill="#DDD6FE" fontSize="5.2" fontFamily="system-ui, sans-serif">satisfaction</text>
         <text x="32" y="47.5" textAnchor="middle" fill="#DDD6FE" fontSize="5.2" fontFamily="system-ui, sans-serif">guarantee</text>
         <text fill="white" fontSize="3.8" fontFamily="system-ui, sans-serif" opacity="0.75">
-          <textPath href="#outerTextPath" startOffset="2%">
+          <textPath href={`#${textPathId}`} startOffset="2%">
             ~ Try worry-free for 30 days ~ Try worry-free for 30 days ~
           </textPath>
         </text>

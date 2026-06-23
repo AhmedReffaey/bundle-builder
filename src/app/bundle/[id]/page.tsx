@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import type { Step } from '@/types';
+import { encodeBundle } from '@/lib/bundleShare';
 
 interface SavedBundle { id: string; email: string; steps: Step[]; savedAt: string; }
 
@@ -28,7 +29,7 @@ export default async function BundlePage({ params }: { params: Promise<{ id: str
     );
   }
 
-  const encoded = Buffer.from(JSON.stringify(bundle.steps)).toString('base64');
+  const encoded = encodeBundle(bundle.steps);
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-white px-4">

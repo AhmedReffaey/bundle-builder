@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { encodeBundle } from '../src/lib/bundleShare';
 
 
 test.beforeEach(async ({ page }) => {
@@ -133,37 +134,26 @@ test('selecting a sensor auto-adds the Sense Hub', async ({ page }) => {
 // ── Bundle URL share & reload ──────────────────────────────────────────────────
 
 test('shared bundle URL restores quantities on reload', async ({ page }) => {
-  // Encode current default state and reload with ?bundle= param
-  const encoded = await page.evaluate(() => {
-    type V = { id: string; quantity: number };
-    type P = { id: string; quantity?: number; variants?: V[] };
-    type S = { id: string; products: P[] };
-    const steps: S[] = JSON.parse(localStorage.getItem('wyze-bundle') ?? 'null')?.state?.steps ?? [];
-    if (!steps.length) return null;
-    const snapshot = steps.reduce<Record<string, { qty?: number; variants?: Record<string, number> }>>((acc, step) => {
-      step.products.forEach((p) => {
-        if (p.variants) {
-          const variantQtys = p.variants.reduce<Record<string, number>>((va, v) => {
-            if (v.quantity > 0) va[v.id] = v.quantity;
-            return va;
-          }, {});
-          if (Object.keys(variantQtys).length) acc[p.id] = { variants: variantQtys };
-        } else if ((p.quantity ?? 0) > 0) {
-          acc[p.id] = { qty: p.quantity };
-        }
-      });
-      return acc;
-    }, {});
-    return btoa(JSON.stringify(snapshot));
+  // Trigger a state change to flush Zustand state into localStorage
+  await page.getByRole('button', { name: 'Increase quantity' }).first().click();
+  await page.waitForFunction(() => localStorage.getItem('wyze-bundle') !== null, { timeout: 3000 });
+
+  // Read the persisted steps from localStorage
+  const steps = await page.evaluate(() => {
+    type Step = { id: string; step: number; products: unknown[] };
+    const raw = localStorage.getItem('wyze-bundle')!;
+    return (JSON.parse(raw) as { state: { steps: Step[] } }).state.steps;
   });
 
-  if (!encoded) return; // skip if no localStorage yet
+  // Encode using the same BundleSnapshot format the app decodes
+  const encoded = encodeBundle(steps as Parameters<typeof encodeBundle>[0]);
 
   await page.goto(`/?bundle=${encoded}`);
   await page.locator('#step-header-cameras').waitFor({ state: 'visible' });
 
-  // At least one camera should appear in the review panel
+  // Cameras should be restored in the review panel
   await expect(page.getByText('CAMERAS', { exact: true })).toBeVisible();
+  await expect(page.getByText('Wyze Cam v4 · White')).toBeVisible();
 });
 
 // ── Variant switch ─────────────────────────────────────────────────────────────

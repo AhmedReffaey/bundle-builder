@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Step } from '@/types';
 import { analytics } from '@/lib/analytics';
 
@@ -15,22 +15,50 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [shareUrl, setShareUrl] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      returnFocusRef.current = document.activeElement as HTMLElement;
       setStatus('idle');
       setEmail('');
+      setEmailSent(false);
+      setCopied(false);
       setTimeout(() => inputRef.current?.focus(), 50);
+    } else {
+      returnFocusRef.current?.focus();
     }
   }, [isOpen]);
 
+  const getFocusable = useCallback(() =>
+    Array.from(
+      modalRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) ?? []
+    ), []);
+
   useEffect(() => {
     if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab') {
+        const els = getFocusable();
+        if (!els.length) return;
+        const first = els[0];
+        const last = els[els.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+    };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, getFocusable]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,12 +95,16 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
       onClick={onClose}
     >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="save-bundle-title"
         className="bg-white w-full sm:max-w-[400px] rounded-t-[3px] sm:rounded-[3px] shadow-modal animate-modal-slide-up p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {status !== 'success' ? (
           <>
-            <h2 className="font-extrabold text-gray-900 text-[18px] mb-1">Save your bundle</h2>
+            <h2 id="save-bundle-title" className="font-extrabold text-gray-900 text-[18px] mb-1">Save your bundle</h2>
             <p className="text-gray-500 text-[13px] mb-5">
               Enter your email and we&apos;ll send you a link to restore your bundle on any device.
             </p>
@@ -116,7 +148,7 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
-            <h2 className="font-extrabold text-gray-900 text-[18px] mb-1">Bundle saved!</h2>
+            <h2 id="save-bundle-title" className="font-extrabold text-gray-900 text-[18px] mb-1">Bundle saved!</h2>
             <p className="text-gray-500 text-[13px] mb-4">
               {emailSent
                 ? <>We&apos;ve sent a link to <b className="text-gray-900">{email}</b>. Use it to restore your bundle anytime.</>
@@ -125,10 +157,14 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
             </p>
             {shareUrl && (
               <button
-                onClick={() => { navigator.clipboard.writeText(shareUrl); }}
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
                 className="w-full border border-gray-200 rounded-[3px] py-2 text-xs text-gray-500 hover:border-brand-purple hover:text-brand-purple transition-colors font-mono truncate px-2 mb-3"
               >
-                {shareUrl}
+                {copied ? 'Copied!' : shareUrl}
               </button>
             )}
             <button

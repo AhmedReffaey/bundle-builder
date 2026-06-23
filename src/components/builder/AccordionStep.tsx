@@ -13,7 +13,7 @@ interface AccordionStepProps {
 }
 
 export default function AccordionStep({ step, totalSteps, isLast }: AccordionStepProps) {
-  const { activeStep, setActiveStep, getTotalSelectedCount, steps } = useBundleStore();
+  const { activeStep, setActiveStep, getTotalSelectedCount, steps, setProductQuantity } = useBundleStore();
   const isOpen = activeStep === step.step;
   const selectedCount = getTotalSelectedCount(step.id);
   const isCompleted = activeStep > step.step && selectedCount > 0;
@@ -28,8 +28,6 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
       if (totalCameraQty > 3) {
         return {
           message: 'Most homes are well-covered with 2–3 cameras. Adding more may require a higher internet bandwidth plan.',
-          ctaLabel: 'Learn about bandwidth',
-          onCta: () => {},
         };
       }
     }
@@ -39,8 +37,6 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
       if (camerasSelected && !sensorsSelected) {
         return {
           message: 'Sensors complete your camera setup — detect motion before cameras even record.',
-          ctaLabel: 'Add sensors',
-          onCta: () => {},
         };
       }
     }
@@ -53,7 +49,7 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
         return {
           message: 'No SD card yet — without one, cameras only save to the cloud (needs a plan).',
           ctaLabel: 'Add SD card',
-          onCta: () => {},
+          onCta: () => setProductQuantity('sd-card-256', 1),
         };
       }
     }
