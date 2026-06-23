@@ -23,7 +23,18 @@ export default function QuantityStepper({ value, onChange, min = 0, max, size = 
   ].join(' ');
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div
+      className="flex items-center gap-0.5"
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          if (!atMax) onChange(value + 1);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          if (value > min) onChange(Math.max(min, value - 1));
+        }
+      }}
+    >
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}

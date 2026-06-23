@@ -38,6 +38,7 @@ export default function ProductImage({ src, alt, fill, width, height, className,
       className={className}
       onError={() => setError(true)}
       priority={priority}
+      sizes={fill ? '(max-width: 640px) 100px, (max-width: 1024px) 150px, 200px' : undefined}
     />
   );
 }

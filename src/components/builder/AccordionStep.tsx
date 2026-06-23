@@ -20,6 +20,19 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
 
   // Compute upsell suggestions for this step
   const upsell = (() => {
+    if (step.id === 'cameras') {
+      const totalCameraQty = step.products.reduce((total, p) => {
+        if (p.variants) return total + p.variants.reduce((s, v) => s + v.quantity, 0);
+        return total + (p.quantity ?? 0);
+      }, 0);
+      if (totalCameraQty > 3) {
+        return {
+          message: 'Most homes are well-covered with 2–3 cameras. Adding more may require a higher internet bandwidth plan.',
+          ctaLabel: 'Learn about bandwidth',
+          onCta: () => {},
+        };
+      }
+    }
     if (step.id === 'sensors') {
       const camerasSelected = getTotalSelectedCount('cameras') > 0;
       const sensorsSelected = selectedCount > 0;
@@ -203,7 +216,7 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
                 <div className="flex justify-center mt-5">
                   <button
                     onClick={handleNext}
-                    className="w-1/2 h-[39px] px-6 py-[5px] text-brand-deep-purple font-bold rounded-[7px] transition-opacity hover:opacity-80 active:opacity-60 text-[15px] bg-transparent border border-brand-deep-purple"
+                    className="w-full sm:w-1/2 h-[39px] px-6 py-[5px] text-brand-deep-purple font-bold rounded-[7px] transition-opacity hover:opacity-80 active:opacity-60 text-[15px] bg-transparent border border-brand-deep-purple"
                   >
                     Next: {step.nextLabel}
                   </button>

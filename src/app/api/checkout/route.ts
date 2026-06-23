@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import type { ReviewItem } from '@/types';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 // Set STRIPE_SECRET_KEY in .env.local to enable real payments.
 // Without it the endpoint returns a mock session for development.
@@ -12,6 +13,13 @@ interface CheckoutBody {
 }
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    ?? req.headers.get('x-real-ip')
+    ?? 'unknown';
+  if (!checkRateLimit(`checkout:${ip}`)) {
+    return NextResponse.json({ error: 'Too many requests. Please wait a moment.' }, { status: 429 });
+  }
+
   const { items, total }: CheckoutBody = await req.json();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3002';
 

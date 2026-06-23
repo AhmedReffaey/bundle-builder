@@ -22,11 +22,14 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
   const [errorMsg, setErrorMsg] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const trackOrderConfirmed = useBundleStore((s) => s.trackOrderConfirmed);
 
   const handleClose = useCallback(() => {
+    abortControllerRef.current?.abort();
     setPhase('summary');
     setOrderNumber('');
+    returnFocusRef.current?.focus();
     onClose();
   }, [onClose]);
 
@@ -86,6 +89,7 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
   };
 
   const handlePlaceOrder = async () => {
+    abortControllerRef.current = new AbortController();
     setIsLoading(true);
     setErrorMsg('');
     try {
@@ -93,6 +97,7 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, total: total.current }),
+        signal: abortControllerRef.current.signal,
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -108,7 +113,8 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
       setPhase('success');
       trackOrderConfirmed(orderId);
       analytics.orderConfirmed(orderId, total.current);
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return;
       setErrorMsg('Checkout failed. Please try again.');
     } finally {
       setIsLoading(false);
