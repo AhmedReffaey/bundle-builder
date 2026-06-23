@@ -38,13 +38,17 @@ export async function POST(req: NextRequest) {
     quantity: item.quantity,
   }));
 
-  const session = await stripe.checkout.sessions.create({
-    mode: items.some((i) => i.isMonthly) ? 'subscription' : 'payment',
-    line_items: lineItems,
-    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url:  `${baseUrl}/checkout/cancel`,
-    metadata: { bundle_total: total.toFixed(2) },
-  });
-
-  return NextResponse.json({ mode: 'stripe', url: session.url });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: items.some((i) => i.isMonthly) ? 'subscription' : 'payment',
+      line_items: lineItems,
+      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${baseUrl}/checkout/cancel`,
+      metadata: { bundle_total: total.toFixed(2) },
+    });
+    return NextResponse.json({ mode: 'stripe', url: session.url });
+  } catch (err) {
+    console.error('Stripe session creation failed:', err);
+    return NextResponse.json({ error: 'Checkout failed. Please try again.' }, { status: 500 });
+  }
 }

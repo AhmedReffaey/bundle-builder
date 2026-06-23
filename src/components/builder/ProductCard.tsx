@@ -114,7 +114,7 @@ export default function ProductCard({ product, stepId, priority, vertical }: Pro
           {stepId === 'plan' ? (
             <button
               onClick={() => handleQty(currentQty > 0 ? 0 : 1)}
-              className="flex items-center gap-1.5 cursor-pointer focus:outline-none py-1"
+              className="flex items-center gap-1.5 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2 rounded-[3px] py-1"
             >
               <div
                 className={[

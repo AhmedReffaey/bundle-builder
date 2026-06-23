@@ -22,6 +22,8 @@ interface BundleStore extends StepState {
   getTotal: () => { original: number; current: number; savings: number };
   saveSystem: () => void;
   trackOrderConfirmed: (orderId: string) => void;
+  showHubToast: boolean;
+  dismissHubToast: () => void;
 }
 
 export type { ReviewItem };
@@ -48,6 +50,8 @@ export const useBundleStore = create<BundleStore>()(
     (set, get) => ({
       steps: initialSteps,
       activeStep: 1,
+      showHubToast: false,
+      dismissHubToast: () => set({ showHubToast: false }),
 
       setActiveStep: (step) => {
         const prev = get().activeStep;
@@ -126,16 +130,19 @@ export const useBundleStore = create<BundleStore>()(
             const anyNonHubSensor = sensorsStep?.products.some(
               (p) => p.id !== 'sense-hub' && (p.id === productId ? newQty > 0 : (p.quantity ?? 0) > 0)
             );
+            const prevHubQty = state.steps.find((s) => s.id === 'sensors')?.products.find((p) => p.id === 'sense-hub')?.quantity ?? 0;
+            const nextHubQty = anyNonHubSensor ? 1 : 0;
             return {
               steps: updatedSteps.map((step) => {
                 if (step.id !== 'sensors') return step;
                 return {
                   ...step,
                   products: step.products.map((p) =>
-                    p.id === 'sense-hub' ? { ...p, quantity: anyNonHubSensor ? 1 : 0 } : p
+                    p.id === 'sense-hub' ? { ...p, quantity: nextHubQty } : p
                   ),
                 };
               }),
+              showHubToast: nextHubQty === 1 && prevHubQty === 0,
             };
           }
 

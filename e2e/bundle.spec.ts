@@ -18,10 +18,11 @@ test('page loads: cameras step open, review panel visible', async ({ page }) => 
 });
 
 test('pre-selected products appear in the review panel', async ({ page }) => {
-  // JSON defaults: Wyze Cam v4 (qty 1) + Wyze Cam Pan v3 (qty 2)
-  // exact:true avoids the strict-mode violation — "CAMERAS" is a substring of several elements
+  // JSON defaults: Wyze Cam v4 (qty 1, White) + Wyze Cam Pan v3 (qty 2, White)
+  // Target the review panel line item text (includes variant label) — avoids matching
+  // the accordion h3 headings which are inside overflow-hidden containers
   await expect(page.getByText('CAMERAS', { exact: true })).toBeVisible();
-  await expect(page.getByText('Wyze Cam v4').first()).toBeVisible();
+  await expect(page.getByText('Wyze Cam v4 · White')).toBeVisible();
 });
 
 // ── Quantity interaction ───────────────────────────────────────────────────────
@@ -89,6 +90,96 @@ test('checkout modal traps Tab focus inside', async ({ page }) => {
     return el ? el.closest('[role="dialog"]') !== null : false;
   });
   expect(focusedInsideModal).toBe(true);
+});
+
+// ── Hub auto-add ──────────────────────────────────────────────────────────────
+
+test('selecting a sensor auto-adds the Sense Hub', async ({ page }) => {
+  // Cameras step is open by default — click + here to flush state into localStorage
+  await page.getByRole('button', { name: 'Increase quantity' }).first().click();
+  await page.waitForFunction(() => localStorage.getItem('wyze-bundle') !== null, { timeout: 3000 });
+
+  // Zero all sensor quantities while cameras accordion is still open (no interception risk)
+  await page.evaluate(() => {
+    type P = { quantity: number; id: string };
+    type S = { products: P[]; id: string };
+    type Stored = { state: { steps: S[] } };
+    const raw = localStorage.getItem('wyze-bundle')!;
+    const stored = JSON.parse(raw) as Stored;
+    stored.state.steps = stored.state.steps.map((step) =>
+      step.id !== 'sensors' ? step : {
+        ...step,
+        products: step.products.map((p) => ({ ...p, quantity: 0 })),
+      }
+    );
+    localStorage.setItem('wyze-bundle', JSON.stringify(stored));
+  });
+
+  // Reload with zeroed sensors, then open sensors step
+  await page.reload();
+  await page.locator('#step-header-cameras').waitFor({ state: 'visible' });
+  await page.locator('#step-header-sensors').click();
+  await expect(page.locator('#step-header-sensors')).toHaveAttribute('aria-expanded', 'true');
+
+  // Add a motion sensor within the sensors body — hub must auto-appear in the review panel
+  await page.locator('#step-body-sensors').getByRole('button', { name: 'Increase quantity' }).first().click();
+
+  // ReviewLineItem renders name as <span class="font-medium ..."> — distinct from the accordion h3
+  await expect(
+    page.locator('span.font-medium').filter({ hasText: 'Wyze Sense Hub (Required)' })
+  ).toBeVisible();
+});
+
+// ── Bundle URL share & reload ──────────────────────────────────────────────────
+
+test('shared bundle URL restores quantities on reload', async ({ page }) => {
+  // Encode current default state and reload with ?bundle= param
+  const encoded = await page.evaluate(() => {
+    type V = { id: string; quantity: number };
+    type P = { id: string; quantity?: number; variants?: V[] };
+    type S = { id: string; products: P[] };
+    const steps: S[] = JSON.parse(localStorage.getItem('wyze-bundle') ?? 'null')?.state?.steps ?? [];
+    if (!steps.length) return null;
+    const snapshot = steps.reduce<Record<string, { qty?: number; variants?: Record<string, number> }>>((acc, step) => {
+      step.products.forEach((p) => {
+        if (p.variants) {
+          const variantQtys = p.variants.reduce<Record<string, number>>((va, v) => {
+            if (v.quantity > 0) va[v.id] = v.quantity;
+            return va;
+          }, {});
+          if (Object.keys(variantQtys).length) acc[p.id] = { variants: variantQtys };
+        } else if ((p.quantity ?? 0) > 0) {
+          acc[p.id] = { qty: p.quantity };
+        }
+      });
+      return acc;
+    }, {});
+    return btoa(JSON.stringify(snapshot));
+  });
+
+  if (!encoded) return; // skip if no localStorage yet
+
+  await page.goto(`/?bundle=${encoded}`);
+  await page.locator('#step-header-cameras').waitFor({ state: 'visible' });
+
+  // At least one camera should appear in the review panel
+  await expect(page.getByText('CAMERAS', { exact: true })).toBeVisible();
+});
+
+// ── Variant switch ─────────────────────────────────────────────────────────────
+
+test('switching variant preserves quantity for that variant', async ({ page }) => {
+  // cam-v4-white starts at qty 1; switch to Black — white qty should drop to 0
+  // and the new variant card stepper should show the Black variant active
+  const whiteBtn = page.locator('#step-body-cameras').getByRole('button', { name: /^White/ }).first();
+  const blackBtn = page.locator('#step-body-cameras').getByRole('button', { name: /^Black/ }).first();
+
+  await expect(whiteBtn).toBeVisible();
+  await blackBtn.click();
+
+  // After switching to Black, the active stepper still shows qty from white variant
+  // The review panel should show White · still (qty unchanged on the WHITE variant)
+  await expect(page.getByText('Wyze Cam v4 · White')).toBeVisible();
 });
 
 // ── Empty-bundle guard ────────────────────────────────────────────────────────

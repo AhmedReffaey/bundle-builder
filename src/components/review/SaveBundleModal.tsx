@@ -42,6 +42,7 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, steps }),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (data.url) {
         setShareUrl(data.url);

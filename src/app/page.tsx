@@ -13,6 +13,8 @@ const ReviewPanel = dynamic(() => import('@/components/review/ReviewPanel'), {
   ssr: false,
   loading: () => <ReviewSkeleton />,
 });
+const MobileCartBar = dynamic(() => import('@/components/ui/MobileCartBar'), { ssr: false });
+const HubToast = dynamic(() => import('@/components/ui/HubToast'), { ssr: false });
 
 export default function Home() {
   return (
@@ -37,6 +39,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <MobileCartBar />
+      <HubToast />
     </main>
   );
 }

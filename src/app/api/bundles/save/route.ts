@@ -27,11 +27,23 @@ async function writeDB(bundles: SavedBundle[]): Promise<void> {
   await fs.writeFile(DB_PATH, JSON.stringify(bundles, null, 2));
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_PAYLOAD_BYTES = 500_000; // 500 KB
+
 export async function POST(req: NextRequest) {
+  const contentLength = Number(req.headers.get('content-length') ?? 0);
+  if (contentLength > MAX_PAYLOAD_BYTES) {
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 });
+  }
+
   const { email, steps }: { email: string; steps: Step[] } = await req.json();
 
-  if (!email || !steps) {
+  if (!email || !steps || !Array.isArray(steps)) {
     return NextResponse.json({ error: 'Missing email or steps' }, { status: 400 });
+  }
+
+  if (!EMAIL_RE.test(email.trim())) {
+    return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
 
   const id = randomUUID();

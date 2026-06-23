@@ -19,6 +19,7 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
   const [phase, setPhase] = useState<Phase>('summary');
   const [orderNumber, setOrderNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const trackOrderConfirmed = useBundleStore((s) => s.trackOrderConfirmed);
@@ -77,14 +78,23 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
   const oneTimeItems = items.filter((i) => !i.isMonthly);
   const monthlyItems = items.filter((i) => i.isMonthly);
 
+  const makeOrderId = () => {
+    const charset = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const buf = new Uint8Array(6);
+    crypto.getRandomValues(buf);
+    return `WY-${Array.from(buf, (b) => charset[b % charset.length]).join('')}`;
+  };
+
   const handlePlaceOrder = async () => {
     setIsLoading(true);
+    setErrorMsg('');
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, total: total.current }),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
       if (data.mode === 'stripe' && data.url) {
@@ -93,18 +103,13 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
       }
 
       // mock / dev mode — show in-app success
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      const orderId = `WY-${Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')}`;
+      const orderId = makeOrderId();
       setOrderNumber(orderId);
       setPhase('success');
       trackOrderConfirmed(orderId);
       analytics.orderConfirmed(orderId, total.current);
     } catch {
-      // Fallback to mock if fetch fails
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      const orderId = `WY-${Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')}`;
-      setOrderNumber(orderId);
-      setPhase('success');
+      setErrorMsg('Checkout failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -206,6 +211,9 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
 
             {/* Footer */}
             <div className="px-6 py-5 border-t border-gray-100 flex-shrink-0">
+              {errorMsg && (
+                <p className="text-red-500 text-xs text-center mb-3">{errorMsg}</p>
+              )}
               <button
                 onClick={handlePlaceOrder}
                 disabled={isLoading}
