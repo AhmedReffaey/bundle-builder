@@ -95,6 +95,15 @@ export const useBundleStore = create<BundleStore>()(
         const prevProduct = get().steps.flatMap((s) => s.products).find((p) => p.id === productId);
         const prevQty = prevProduct?.quantity ?? 0;
 
+        // Capture the currently-selected plan before the exclusive-selection wipes it
+        const prevSelectedPlan = (() => {
+          const planStep = get().steps.find((s) => s.id === 'plan');
+          if (!planStep) return null;
+          const isTargetInPlan = planStep.products.some((p) => p.id === productId);
+          if (!isTargetInPlan) return null;
+          return planStep.products.find((p) => p.id !== productId && (p.quantity ?? 0) > 0) ?? null;
+        })();
+
         set((state) => {
           const isPlanStepProduct = state.steps.some(
             (step) => step.id === 'plan' && step.products.some((p) => p.id === productId)
@@ -161,6 +170,11 @@ export const useBundleStore = create<BundleStore>()(
           } else if (newQty === 0 && prevQty > 0) {
             if (prevProduct) analytics.productRemoved(productId, prevProduct.name);
           }
+        }
+
+        // Fire productRemoved for the plan that was silently deselected by exclusive-selection logic
+        if (prevSelectedPlan) {
+          analytics.productRemoved(prevSelectedPlan.id, prevSelectedPlan.name);
         }
       },
 

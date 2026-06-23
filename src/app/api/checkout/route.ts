@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       unit_amount: Math.round(item.price * 100),
       product_data: {
         name: item.variantLabel ? `${item.name} · ${item.variantLabel}` : item.name,
-        images: [item.image],
+        images: [item.image.startsWith('/') ? `${baseUrl}${item.image}` : item.image],
       },
       ...(item.isMonthly ? { recurring: { interval: 'month' } } : {}),
     },

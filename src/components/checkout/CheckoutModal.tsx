@@ -15,6 +15,13 @@ interface CheckoutModalProps {
 
 type Phase = 'summary' | 'success';
 
+function makeOrderId(): string {
+  const charset = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const buf = new Uint8Array(6);
+  crypto.getRandomValues(buf);
+  return `WY-${Array.from(buf, (b) => charset[b % charset.length]).join('')}`;
+}
+
 export default function CheckoutModal({ isOpen, onClose, items, total }: CheckoutModalProps) {
   const [phase, setPhase] = useState<Phase>('summary');
   const [orderNumber, setOrderNumber] = useState('');
@@ -81,13 +88,6 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
 
   const oneTimeItems = items.filter((i) => !i.isMonthly);
   const monthlyItems = items.filter((i) => i.isMonthly);
-
-  const makeOrderId = () => {
-    const charset = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const buf = new Uint8Array(6);
-    crypto.getRandomValues(buf);
-    return `WY-${Array.from(buf, (b) => charset[b % charset.length]).join('')}`;
-  };
 
   const handlePlaceOrder = async () => {
     abortControllerRef.current = new AbortController();

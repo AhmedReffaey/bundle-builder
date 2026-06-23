@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import type { Step } from '@/types';
 import { useBundleStore } from '@/store/bundleStore';
 import ProductCard from './ProductCard';
@@ -19,7 +20,7 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
   const isCompleted = activeStep > step.step && selectedCount > 0;
 
   // Compute upsell suggestions for this step
-  const upsell = (() => {
+  const upsell = useMemo(() => {
     if (step.id === 'cameras') {
       const totalCameraQty = step.products.reduce((total, p) => {
         if (p.variants) return total + p.variants.reduce((s, v) => s + v.quantity, 0);
@@ -54,7 +55,7 @@ export default function AccordionStep({ step, totalSteps, isLast }: AccordionSte
       }
     }
     return null;
-  })();
+  }, [step, selectedCount, steps, getTotalSelectedCount, setProductQuantity]);
 
   const handleToggle = () => setActiveStep(isOpen ? 0 : step.step);
   const handleNext = () => {
