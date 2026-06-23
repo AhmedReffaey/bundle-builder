@@ -148,7 +148,7 @@ test('shared bundle URL restores quantities on reload', async ({ page }) => {
   // Encode using the same BundleSnapshot format the app decodes
   const encoded = encodeBundle(steps as Parameters<typeof encodeBundle>[0]);
 
-  await page.goto(`/?bundle=${encoded}`);
+  await page.goto(`/?bundle=${encodeURIComponent(encoded)}`);
   await page.locator('#step-header-cameras').waitFor({ state: 'visible' });
 
   // Cameras should be restored in the review panel

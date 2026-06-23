@@ -41,6 +41,11 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
     ), []);
 
   useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
@@ -119,7 +124,7 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
                 className="w-full border border-gray-300 rounded-[3px] px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-purple transition-colors"
               />
               {status === 'error' && (
-                <p className="text-red-500 text-xs">Something went wrong. Please try again.</p>
+                <p role="alert" className="text-red-500 text-xs">Something went wrong. Please try again.</p>
               )}
               <button
                 type="submit"

@@ -49,5 +49,6 @@ export interface ReviewItem {
   category: string;
   isFree?: boolean;
   isMonthly?: boolean;
+  required?: boolean;
 }
 

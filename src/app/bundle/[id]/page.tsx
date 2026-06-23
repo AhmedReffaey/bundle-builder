@@ -39,7 +39,7 @@ export default async function BundlePage({ params }: { params: Promise<{ id: str
           Saved on {new Date(bundle.savedAt).toLocaleDateString()}
         </p>
         <a
-          href={`/?bundle=${encoded}`}
+          href={`/?bundle=${encodeURIComponent(encoded)}`}
           className="inline-block px-6 py-3 bg-brand-indigo text-white font-bold rounded-[3px] text-sm hover:opacity-90 transition-opacity"
         >
           Restore my bundle →

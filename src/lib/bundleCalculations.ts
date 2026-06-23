@@ -30,6 +30,7 @@ export function computeReviewItems(steps: Step[]): ReviewItem[] {
               quantity: variant.quantity,
               category,
               isMonthly: step.id === 'plan',
+              required: product.required,
             });
           }
         }
@@ -48,6 +49,7 @@ export function computeReviewItems(steps: Step[]): ReviewItem[] {
             category,
             isFree: product.price === 0,
             isMonthly: step.id === 'plan',
+            required: product.required,
           });
         }
       }

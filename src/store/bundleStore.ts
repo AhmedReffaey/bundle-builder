@@ -92,6 +92,9 @@ export const useBundleStore = create<BundleStore>()(
       },
 
       setProductQuantity: (productId, quantity) => {
+        const prevProduct = get().steps.flatMap((s) => s.products).find((p) => p.id === productId);
+        const prevQty = prevProduct?.quantity ?? 0;
+
         set((state) => {
           const isPlanStepProduct = state.steps.some(
             (step) => step.id === 'plan' && step.products.some((p) => p.id === productId)
@@ -148,6 +151,17 @@ export const useBundleStore = create<BundleStore>()(
 
           return { steps: updatedSteps };
         });
+
+        // Fire analytics for the target product only (hub is auto-managed, skip it)
+        if (productId !== 'sense-hub') {
+          const newProduct = get().steps.flatMap((s) => s.products).find((p) => p.id === productId);
+          const newQty = newProduct?.quantity ?? 0;
+          if (newQty > prevQty) {
+            if (newProduct) analytics.productAdded(productId, newProduct.name, newProduct.price, newQty - prevQty);
+          } else if (newQty === 0 && prevQty > 0) {
+            if (prevProduct) analytics.productRemoved(productId, prevProduct.name);
+          }
+        }
       },
 
       setActiveVariant: (productId, variantId) => {

@@ -88,7 +88,7 @@ export default function ReviewLineItem({ item }: ReviewLineItemProps) {
         </span>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <QuantityStepper value={item.quantity} onChange={handleQtyChange} size="sm" min={0} />
+        <QuantityStepper value={item.quantity} onChange={handleQtyChange} size="sm" min={item.required ? 1 : 0} />
         {renderPrice()}
       </div>
     </div>

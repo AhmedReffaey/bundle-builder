@@ -54,11 +54,13 @@ export default function ReviewPanel() {
 
   const handleShare = () => {
     const encoded = encodeBundle(steps);
-    const url = `${window.location.origin}/?bundle=${encoded}`;
+    const url = `${window.location.origin}/?bundle=${encodeURIComponent(encoded)}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       analytics.bundleShared();
       setTimeout(() => setCopied(false), 2500);
+    }).catch(() => {
+      // Clipboard write failed (permission denied or non-HTTPS context)
     });
   };
 
