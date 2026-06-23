@@ -182,6 +182,84 @@ test('switching variant preserves quantity for that variant', async ({ page }) =
   await expect(page.getByText('Wyze Cam v4 · White')).toBeVisible();
 });
 
+// ── Mobile cart bar ───────────────────────────────────────────────────────────
+
+test('mobile cart bar is visible on mobile viewport when bundle has items', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // Default state has cameras + sensors + plan — items is not empty
+  const bar = page.locator('[data-testid="mobile-cart-bar"]');
+  await expect(bar).toBeVisible();
+  await expect(bar.getByRole('button', { name: 'Checkout' })).toBeVisible();
+});
+
+test('mobile cart bar disappears when viewport is desktop-sized', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  // lg:hidden hides it above 1024px
+  await expect(page.locator('[data-testid="mobile-cart-bar"]')).not.toBeVisible();
+});
+
+// ── Hub toast ─────────────────────────────────────────────────────────────────
+
+test('hub toast appears when sense hub is auto-added', async ({ page }) => {
+  await page.getByRole('button', { name: 'Increase quantity' }).first().click();
+  await page.waitForFunction(() => localStorage.getItem('wyze-bundle') !== null, { timeout: 3000 });
+
+  // Zero all sensors so hub starts at 0 (same technique as hub auto-add test)
+  await page.evaluate(() => {
+    type P = { quantity: number; id: string };
+    type S = { products: P[]; id: string };
+    type Stored = { state: { steps: S[] } };
+    const raw = localStorage.getItem('wyze-bundle')!;
+    const stored = JSON.parse(raw) as Stored;
+    stored.state.steps = stored.state.steps.map((step) =>
+      step.id !== 'sensors' ? step : {
+        ...step,
+        products: step.products.map((p) => ({ ...p, quantity: 0 })),
+      }
+    );
+    localStorage.setItem('wyze-bundle', JSON.stringify(stored));
+  });
+
+  await page.reload();
+  await page.locator('#step-header-cameras').waitFor({ state: 'visible' });
+  await page.locator('#step-header-sensors').click();
+  await expect(page.locator('#step-header-sensors')).toHaveAttribute('aria-expanded', 'true');
+
+  await page.locator('#step-body-sensors').getByRole('button', { name: 'Increase quantity' }).first().click();
+
+  // Toast should appear with the hub notification
+  await expect(page.getByRole('status')).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Sense Hub added');
+});
+
+// ── Camera compatibility warning ──────────────────────────────────────────────
+
+test('camera compatibility warning appears when total camera quantity exceeds 3', async ({ page }) => {
+  // Default: cam-v4-white=1, cam-pan-v3-white=2 → total=3 (no warning)
+  await expect(
+    page.locator('#step-body-cameras').getByText('Most homes are well-covered')
+  ).not.toBeVisible();
+
+  // One more click on cam-v4 white: total becomes 2+2=4 → warning appears
+  await page.locator('#step-body-cameras').getByRole('button', { name: 'Increase quantity' }).first().click();
+
+  await expect(
+    page.locator('#step-body-cameras').getByText('Most homes are well-covered with 2–3 cameras')
+  ).toBeVisible();
+});
+
+// ── Save bundle modal ─────────────────────────────────────────────────────────
+
+test('save bundle modal shows success after form submission', async ({ page }) => {
+  await page.getByRole('button', { name: 'Save for later' }).click();
+  await expect(page.getByText('Save your bundle')).toBeVisible();
+
+  await page.getByPlaceholder('you@example.com').fill('test@example.com');
+  await page.getByRole('button', { name: 'Save & send link' }).click();
+
+  await expect(page.getByText('Bundle saved!')).toBeVisible({ timeout: 5000 });
+});
+
 // ── Empty-bundle guard ────────────────────────────────────────────────────────
 
 test('checkout button is disabled when bundle is empty', async ({ page }) => {

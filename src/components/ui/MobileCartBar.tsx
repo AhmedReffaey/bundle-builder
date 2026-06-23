@@ -26,7 +26,7 @@ export default function MobileCartBar() {
 
   return (
     <>
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center gap-3">
+      <div data-testid="mobile-cart-bar" className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center gap-3">
         {/* Pricing */}
         <div className="flex flex-col min-w-0 flex-1">
           <div className="flex items-baseline gap-1.5">

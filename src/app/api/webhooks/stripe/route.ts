@@ -21,6 +21,10 @@ async function appendOrder(order: Order): Promise<void> {
     const raw = await fs.readFile(ORDERS_PATH, 'utf-8');
     orders = JSON.parse(raw) as Order[];
   } catch { /* first order or file missing */ }
+
+  // Idempotency: Stripe retries webhooks — skip if this session is already recorded
+  if (orders.some((o) => o.sessionId === order.sessionId)) return;
+
   orders.push(order);
   await fs.writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2));
 }

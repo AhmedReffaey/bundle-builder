@@ -1,0 +1,290 @@
+[
+  {
+    "id": "8b219f94-bdac-4088-9e8c-cc026e8b86fb",
+    "email": "test@example.com",
+    "steps": [
+      {
+        "id": "cameras",
+        "step": 1,
+        "title": "Choose your cameras",
+        "nextLabel": "Choose your plan",
+        "icon": "camera",
+        "products": [
+          {
+            "id": "cam-v4",
+            "name": "Wyze Cam v4",
+            "description": "The clearest Wyze Cam ever made.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-v4-wyze-labs-inc-5186547.png?v=1762447655",
+            "badge": "Save 22%",
+            "compareAtPrice": 35.98,
+            "price": 27.98,
+            "maxQty": 5,
+            "rating": 4.8,
+            "reviewCount": 3241,
+            "variants": [
+              {
+                "id": "cam-v4-white",
+                "label": "White",
+                "color": "#FFFFFF",
+                "quantity": 1,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-v4-wyze-labs-inc-5186547.png"
+              },
+              {
+                "id": "cam-v4-grey",
+                "label": "Grey",
+                "color": "#9CA3AF",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-v4-wyze-labs-inc-7932440.png"
+              },
+              {
+                "id": "cam-v4-black",
+                "label": "Black",
+                "color": "#1F2937",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-v4-wyze-labs-inc-2811136.png"
+              }
+            ],
+            "activeVariantId": "cam-v4-white"
+          },
+          {
+            "id": "cam-pan-v3",
+            "name": "Wyze Cam Pan v3",
+            "description": "360° pan and 180° tilt security camera.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-pan-v3-wyze-labs-inc-4415418.webp?v=1773434969",
+            "badge": "Save 12%",
+            "compareAtPrice": 39.98,
+            "price": 34.98,
+            "maxQty": 4,
+            "rating": 4.6,
+            "reviewCount": 1872,
+            "variants": [
+              {
+                "id": "cam-pan-v3-white",
+                "label": "White",
+                "color": "#FFFFFF",
+                "quantity": 2,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-pan-v3-wyze-labs-inc-4415418.webp"
+              },
+              {
+                "id": "cam-pan-v3-black",
+                "label": "Black",
+                "color": "#1F2937",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/refurbished-wyze-cam-pan-v3-wyze-labs-inc-689365.png"
+              }
+            ],
+            "activeVariantId": "cam-pan-v3-white"
+          },
+          {
+            "id": "cam-floodlight-v2",
+            "name": "Wyze Cam Floodlight v2",
+            "description": "2K floodlight camera with a 160° wide-angle view for your garage.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-floodlight-v2-wyze-labs-inc-339891.png?v=1762445396",
+            "badge": "Save 22%",
+            "compareAtPrice": 89.98,
+            "price": 69.98,
+            "maxQty": 3,
+            "rating": 4.7,
+            "reviewCount": 984,
+            "variants": [
+              {
+                "id": "cam-floodlight-v2-white",
+                "label": "White",
+                "color": "#FFFFFF",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-floodlight-v2-wyze-labs-inc-339891.png"
+              },
+              {
+                "id": "cam-floodlight-v2-black",
+                "label": "Black",
+                "color": "#1F2937",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-cam-floodlight-v2-wyze-labs-inc-863303.png"
+              }
+            ],
+            "activeVariantId": "cam-floodlight-v2-white"
+          },
+          {
+            "id": "cam-doorbell",
+            "name": "Wyze Duo Cam Doorbell",
+            "description": "Two cameras. Two views. Double the porch protection.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-battery-video-doorbell-wyze-labs-inc-6120700.webp?v=1775080127",
+            "compareAtPrice": 89.98,
+            "price": 69.98,
+            "maxQty": 2,
+            "rating": 4.5,
+            "reviewCount": 623,
+            "quantity": 0
+          },
+          {
+            "id": "cam-battery-pro",
+            "name": "Wyze Battery Cam Pro",
+            "description": "Protect anywhere. See everything in 2.5K HDR. No power outlet or electrician needed.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-battery-cam-pro-wyze-labs-inc-1939761.png?v=1762439887",
+            "compareAtPrice": 109.98,
+            "price": 89.98,
+            "maxQty": 4,
+            "rating": 4.6,
+            "reviewCount": 1105,
+            "variants": [
+              {
+                "id": "cam-battery-pro-white",
+                "label": "White",
+                "color": "#FFFFFF",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-battery-cam-pro-wyze-labs-inc-1939761.png"
+              },
+              {
+                "id": "cam-battery-pro-black",
+                "label": "Black",
+                "color": "#1F2937",
+                "quantity": 0,
+                "image": "https://www.wyze.com/cdn/shop/files/wyze-battery-cam-pro-wyze-labs-inc-5922471.png"
+              }
+            ],
+            "activeVariantId": "cam-battery-pro-white"
+          }
+        ]
+      },
+      {
+        "id": "plan",
+        "step": 2,
+        "title": "Choose your plan",
+        "nextLabel": "Choose your sensors",
+        "icon": "shield",
+        "products": [
+          {
+            "id": "plan-basic",
+            "name": "Cam Basic",
+            "description": "Basic cloud storage and event notifications for your cameras.",
+            "image": "/images/plan-basic.png",
+            "price": 0,
+            "maxQty": 1,
+            "quantity": 0
+          },
+          {
+            "id": "plan-plus",
+            "name": "Cam Plus",
+            "description": "AI-powered person, vehicle & package detection plus 14-day cloud storage.",
+            "image": "/images/plan-plus.png",
+            "compareAtPrice": 4.99,
+            "price": 2.99,
+            "maxQty": 1,
+            "quantity": 0,
+            "badge": "Save 40%"
+          },
+          {
+            "id": "plan-unlimited",
+            "name": "Cam Unlimited",
+            "description": "All Cam Plus features for unlimited cameras plus 14-day cloud storage.",
+            "image": "/images/plan-unlimited.png",
+            "compareAtPrice": 12.99,
+            "price": 9.99,
+            "maxQty": 1,
+            "quantity": 1,
+            "badge": "Best Value"
+          }
+        ]
+      },
+      {
+        "id": "sensors",
+        "step": 3,
+        "title": "Choose your sensors",
+        "nextLabel": "Add extra protection",
+        "icon": "sensor",
+        "products": [
+          {
+            "id": "sense-motion",
+            "name": "Wyze Sense Motion Sensor",
+            "description": "Detect motion in any room with 110° wide-angle detection.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/products/wyze-sense-motion-sensor-wyze-labs-inc-814192.png?v=1762439811",
+            "compareAtPrice": 39.99,
+            "price": 29.99,
+            "maxQty": 10,
+            "rating": 4.5,
+            "reviewCount": 2108,
+            "quantity": 2
+          },
+          {
+            "id": "sense-hub",
+            "name": "Wyze Sense Hub (Required)",
+            "description": "The central hub that connects all your Wyze sensors.",
+            "image": "https://www.wyze.com/cdn/shop/products/wyze-sense-hub-wyze-labs-inc-960449.png?v=1762439812",
+            "compareAtPrice": 29.92,
+            "price": 0,
+            "maxQty": 1,
+            "quantity": 1,
+            "required": true
+          },
+          {
+            "id": "sense-entry",
+            "name": "Wyze Sense Entry Sensor",
+            "description": "Get alerts when doors or windows open or close.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-sense-entry-sensor-wyze-labs-inc-184639.png?v=1762439804",
+            "compareAtPrice": 19.99,
+            "price": 14.99,
+            "maxQty": 10,
+            "rating": 4.4,
+            "reviewCount": 1563,
+            "quantity": 0
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "step": 4,
+        "title": "Add extra protection",
+        "nextLabel": "Review your system",
+        "icon": "extras",
+        "products": [
+          {
+            "id": "sd-card-256",
+            "name": "Wyze MicroSD Card (256GB)",
+            "description": "Store 24/7 footage locally with a high-speed MicroSD card.",
+            "image": "https://www.wyze.com/cdn/shop/products/wyze-microsd-card-wyze-labs-inc-814588.png?v=1762439817",
+            "compareAtPrice": 27.98,
+            "price": 20.98,
+            "maxQty": 5,
+            "rating": 4.7,
+            "reviewCount": 891,
+            "quantity": 2
+          },
+          {
+            "id": "wyze-plug",
+            "name": "Wyze Plug Outdoor",
+            "description": "Control outdoor devices and monitor energy usage from anywhere.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/files/wyze-plug-wyze-labs-inc-2841977.webp?v=1770969250",
+            "compareAtPrice": 21.99,
+            "price": 15.99,
+            "maxQty": 5,
+            "rating": 4.3,
+            "reviewCount": 742,
+            "quantity": 0
+          },
+          {
+            "id": "keypad",
+            "name": "Wyze Keypad",
+            "description": "Arm or disarm your Wyze security system with a simple PIN.",
+            "learnMoreUrl": "#",
+            "image": "https://www.wyze.com/cdn/shop/products/wyze-sense-keypad-wyze-labs-inc-842216.png?v=1762439808",
+            "compareAtPrice": 39.99,
+            "price": 29.99,
+            "maxQty": 3,
+            "rating": 4.5,
+            "reviewCount": 418,
+            "quantity": 0
+          }
+        ]
+      }
+    ],
+    "savedAt": "2026-06-23T08:48:10.112Z"
+  }
+]

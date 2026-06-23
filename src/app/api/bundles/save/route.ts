@@ -28,7 +28,7 @@ async function writeDB(bundles: SavedBundle[]): Promise<void> {
   await fs.writeFile(DB_PATH, JSON.stringify(bundles, null, 2));
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MAX_PAYLOAD_BYTES = 500_000; // 500 KB
 
 export async function POST(req: NextRequest) {
@@ -61,22 +61,30 @@ export async function POST(req: NextRequest) {
   bundles.push({ id, email, steps, savedAt: new Date().toISOString() });
   await writeDB(bundles);
 
+  let emailSent = false;
   const resendKey = process.env.RESEND_API_KEY;
   if (resendKey) {
-    const { Resend } = await import('resend');
-    const resend = new Resend(resendKey);
-    await resend.emails.send({
-      from: 'Wyze Bundle Builder <bundles@wyze.com>',
-      to: email.trim(),
-      subject: 'Your Wyze security bundle — saved for later',
-      html: `<p>Hi there,</p>
+    try {
+      const { Resend } = await import('resend');
+      const resend = new Resend(resendKey);
+      const { data, error } = await resend.emails.send({
+        from: 'Wyze Bundle Builder <bundles@wyze.com>',
+        to: email.trim(),
+        subject: 'Your Wyze security bundle — saved for later',
+        html: `<p>Hi there,</p>
 <p>Your Wyze security bundle is saved! Click the link below to restore it on any device:</p>
 <p><a href="${baseUrl}/bundle/${id}" style="color:#7C3AED;font-weight:bold;">Restore my bundle →</a></p>
 <p style="color:#6b7280;font-size:12px;">This link never expires.</p>`,
-    }).catch((err: unknown) => {
+      });
+      if (error) {
+        console.error('Resend email failed:', error);
+      } else {
+        emailSent = !!data?.id;
+      }
+    } catch (err) {
       console.error('Resend email failed:', err);
-    });
+    }
   }
 
-  return NextResponse.json({ id, url: `${baseUrl}/bundle/${id}` });
+  return NextResponse.json({ id, url: `${baseUrl}/bundle/${id}`, emailSent });
 }

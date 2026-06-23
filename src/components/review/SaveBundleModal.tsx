@@ -14,6 +14,7 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [shareUrl, setShareUrl] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,12 +47,14 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
       const data = await res.json();
       if (data.url) {
         setShareUrl(data.url);
+        setEmailSent(data.emailSent ?? false);
         setStatus('success');
         analytics.bundleSaved(email);
       } else {
         setStatus('error');
       }
     } catch {
+      analytics.bundleSaveFailed();
       setStatus('error');
     }
   };
@@ -115,7 +118,10 @@ export default function SaveBundleModal({ isOpen, onClose, steps }: SaveBundleMo
             </div>
             <h2 className="font-extrabold text-gray-900 text-[18px] mb-1">Bundle saved!</h2>
             <p className="text-gray-500 text-[13px] mb-4">
-              We&apos;ve sent a link to <b className="text-gray-900">{email}</b>. Use it to restore your bundle anytime.
+              {emailSent
+                ? <>We&apos;ve sent a link to <b className="text-gray-900">{email}</b>. Use it to restore your bundle anytime.</>
+                : 'Your bundle is saved! Copy the link below to restore it on any device.'
+              }
             </p>
             {shareUrl && (
               <button

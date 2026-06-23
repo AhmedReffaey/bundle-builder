@@ -21,6 +21,14 @@ export async function POST(req: NextRequest) {
   }
 
   const { items, total }: CheckoutBody = await req.json();
+
+  const hasInvalidItem = !Array.isArray(items) || items.some(
+    (item) => !Number.isFinite(item.price) || item.price < 0 || !Number.isInteger(item.quantity) || item.quantity < 1
+  );
+  if (hasInvalidItem) {
+    return NextResponse.json({ error: 'Invalid item data' }, { status: 400 });
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3002';
 
   if (!stripeKey) {

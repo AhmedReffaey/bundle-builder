@@ -54,4 +54,8 @@ export const analytics = {
   bundleShared() {
     push('bundle_shared', {});
   },
+
+  bundleSaveFailed() {
+    push('bundle_save_failed', {});
+  },
 };

@@ -131,11 +131,11 @@ export default function ReviewPanel() {
               )}
               <div className="flex items-baseline gap-2">
                 {savings > 0 && (
-                  <span className="line-through text-[26px] font-normal leading-none tracking-[0.4px] text-compare-gray">
+                  <span className="line-through text-[24px] font-normal leading-none tracking-[0.4px] text-compare-gray">
                     ${original.toFixed(2)}
                   </span>
                 )}
-                <span className="text-[26px] font-extrabold leading-none tracking-[0.4px] text-brand-deep-purple">
+                <span className="text-[24px] font-extrabold leading-none tracking-[0.4px] text-brand-deep-purple">
                   ${current.toFixed(2)}
                 </span>
               </div>
