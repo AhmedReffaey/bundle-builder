@@ -28,6 +28,7 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         this.props.fallback ?? (
           <div
+            role="alert"
             className="flex flex-col items-center justify-center p-8 text-center bg-white rounded-[3px] border border-gray-200"
           >
             <svg

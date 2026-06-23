@@ -22,8 +22,9 @@ export default function VariantSelector({ variants, activeVariantId, onSelect, c
             key={variant.id}
             onClick={() => onSelect(variant.id)}
             title={variant.label}
+            aria-pressed={isActive}
             className={[
-              'flex items-center flex-shrink-0 transition-all cursor-pointer rounded-[7px] bg-white',
+              'flex items-center flex-shrink-0 transition-all cursor-pointer rounded-[7px] bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-1',
               compact ? 'h-[22px] px-1.5 gap-0.5' : 'h-[26px] px-2 gap-1',
               isActive
                 ? 'border-[1.5px] border-brand-deep-purple'

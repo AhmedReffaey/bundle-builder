@@ -1,6 +1,6 @@
 export default function BuilderSkeleton() {
   return (
-    <div className="animate-pulse space-y-3">
+    <div role="status" aria-busy="true" aria-label="Loading builder…" className="animate-pulse space-y-3">
       {[1, 2, 3, 4].map((i) => (
         <div key={i}>
           <div className="h-3 w-20 bg-gray-200 rounded mb-2" />

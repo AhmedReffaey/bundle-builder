@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import type { Product } from '@/types';
 import { useBundleStore } from '@/store/bundleStore';
 import ProductImage from '@/components/ui/ProductImage';
@@ -113,6 +114,8 @@ export default function ProductCard({ product, stepId, priority, vertical }: Pro
         <div className="flex items-end justify-between mt-auto pt-2">
           {stepId === 'plan' ? (
             <button
+              role="radio"
+              aria-checked={currentQty > 0}
               onClick={() => handleQty(currentQty > 0 ? 0 : 1)}
               className="flex items-center gap-1.5 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2 rounded-[3px] py-1"
             >
@@ -147,22 +150,24 @@ export default function ProductCard({ product, stepId, priority, vertical }: Pro
 }
 
 function StarRating({ rating }: { rating: number }) {
+  const uid = useId();
   return (
-    <div className="flex items-center gap-[1px]">
+    <div className="flex items-center gap-[1px]" aria-label={`${rating} out of 5 stars`}>
       {[1, 2, 3, 4, 5].map((star) => {
         const filled = rating >= star;
         const half = !filled && rating >= star - 0.5;
+        const gradId = `${uid}-half-${star}`;
         return (
-          <svg key={star} className="w-[10px] h-[10px]" viewBox="0 0 24 24">
+          <svg key={star} className="w-[10px] h-[10px]" viewBox="0 0 24 24" aria-hidden="true">
             {half ? (
               <>
                 <defs>
-                  <linearGradient id={`half-${star}`}>
+                  <linearGradient id={gradId}>
                     <stop offset="50%" stopColor="#F59E0B" />
                     <stop offset="50%" stopColor="#D1D5DB" />
                   </linearGradient>
                 </defs>
-                <path fill={`url(#half-${star})`} d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                <path fill={`url(#${gradId})`} d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
               </>
             ) : (
               <path fill={filled ? '#F59E0B' : '#D1D5DB'} d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />

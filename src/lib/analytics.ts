@@ -58,4 +58,8 @@ export const analytics = {
   bundleSaveFailed() {
     push('bundle_save_failed', {});
   },
+
+  checkoutFailed() {
+    push('checkout_failed', {});
+  },
 };

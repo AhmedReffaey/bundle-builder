@@ -1,6 +1,6 @@
 export default function ReviewSkeleton() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white animate-pulse">
+    <div role="status" aria-busy="true" aria-label="Loading review panel…" className="overflow-hidden rounded-2xl border border-gray-100 bg-white animate-pulse">
       <div className="px-5 pt-5 pb-3">
         <div className="h-5 w-40 bg-gray-200 rounded mb-2" />
         <div className="h-3 w-56 bg-gray-100 rounded" />

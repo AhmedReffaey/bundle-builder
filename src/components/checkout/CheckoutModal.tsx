@@ -111,10 +111,10 @@ export default function CheckoutModal({ isOpen, onClose, items, total }: Checkou
       const orderId = makeOrderId();
       setOrderNumber(orderId);
       setPhase('success');
-      trackOrderConfirmed(orderId);
-      analytics.orderConfirmed(orderId, total.current);
+      trackOrderConfirmed(orderId); // fires analytics.orderConfirmed internally
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
+      analytics.checkoutFailed();
       setErrorMsg('Checkout failed. Please try again.');
     } finally {
       setIsLoading(false);

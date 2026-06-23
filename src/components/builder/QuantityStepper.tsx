@@ -49,7 +49,7 @@ export default function QuantityStepper({ value, onChange, min = 0, max, size = 
         −
       </button>
 
-      <span className={numCls}>{value}</span>
+      <span className={numCls} aria-live="polite" aria-atomic="true">{value}</span>
 
       <button
         onClick={() => onChange(value + 1)}
